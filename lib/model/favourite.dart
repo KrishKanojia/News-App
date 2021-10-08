@@ -7,6 +7,7 @@ class Favourite {
   late String date;
   late String webUrl;
   late String docId;
+  late String content;
 
   Favourite({
     required this.image,
@@ -17,5 +18,6 @@ class Favourite {
     required this.description,
     required this.webUrl,
     required this.docId,
+    required this.content,
   });
 }

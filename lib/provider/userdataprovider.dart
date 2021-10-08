@@ -22,15 +22,15 @@ class UserDataProvider extends ChangeNotifier {
       db.docs.forEach((e) {
         Map<String, dynamic> data = e.data() as Map<String, dynamic>;
         favouriteData = Favourite(
-          image: data["Image"],
-          Chname: data["Channel Name"],
-          Authname: data["Author Name"],
-          date: data["Date"],
-          title: data["Title"],
-          description: data["Description"],
-          webUrl: data["Web Url"],
-          docId: data["DocId"],
-        );
+            image: data["Image"],
+            Chname: data["Channel Name"],
+            Authname: data["Author Name"],
+            date: data["Date"],
+            title: data["Title"],
+            description: data["Description"],
+            webUrl: data["Web Url"],
+            docId: data["DocId"],
+            content: data["Content"]);
         newList.add(favouriteData);
       });
       favouritesList = newList;

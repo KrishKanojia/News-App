@@ -38,7 +38,7 @@ class _SignInState extends State<SignIn> {
           content: Text("Email Is Empty"),
         ),
       );
-    } else if (!regExp.hasMatch(email.text)) {
+    } else if (!regExp.hasMatch(email.text.trim())) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Please Try Vaild Email"),
@@ -59,10 +59,11 @@ class _SignInState extends State<SignIn> {
     } else {
       final FormState? _form = _formKey.currentState;
       if (_form!.validate()) {
+        String _email = email.text.trim();
         try {
           UserCredential User = await FirebaseAuth.instance
               .signInWithEmailAndPassword(
-                  email: email.text, password: password.text);
+                  email: _email, password: password.text);
           print("User Logged In" + User.user!.uid);
 
           print("Hello World");
@@ -154,7 +155,7 @@ class _SignInState extends State<SignIn> {
                   // color: Colors.amber,
                   image: DecorationImage(
                     image: AssetImage(
-                      "assets/logo.png",
+                      "assets/logo3.png",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -198,6 +199,7 @@ class _SignInState extends State<SignIn> {
                                     myIcon: Icon(
                                       Icons.mail_outline,
                                       size: 18,
+                                      color: kprimary,
                                     ),
                                   ),
                                   Container(
@@ -219,6 +221,7 @@ class _SignInState extends State<SignIn> {
                                           obscureText: obserText,
                                           myIcon: Icon(
                                             Icons.lock_outline_sharp,
+                                            color: kprimary,
                                             size: 18,
                                           ),
                                         ),
@@ -233,7 +236,7 @@ class _SignInState extends State<SignIn> {
                                             child: Text(
                                               "Forget Password?",
                                               style: TextStyle(
-                                                  color: kprimary,
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 15),
                                             ),
@@ -247,7 +250,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           Align(
-                            alignment: Alignment(0, 0.8),
+                            alignment: Alignment(0, _height * 0.0014),
                             child: Container(
                               margin: EdgeInsets.only(top: _height * 0.05),
                               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -261,9 +264,11 @@ class _SignInState extends State<SignIn> {
                                   Container(
                                     width: _width * 0.55,
                                     height: _height * 0.06,
+                                    // color: kprimary,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          shape: StadiumBorder()),
+                                          shape: StadiumBorder(),
+                                          primary: kprimary),
                                       onPressed: () {
                                         validation();
                                       },
@@ -288,7 +293,8 @@ class _SignInState extends State<SignIn> {
                                           "Already have Account? ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 15),
+                                              fontSize: 15,
+                                              color: Colors.black),
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -302,7 +308,7 @@ class _SignInState extends State<SignIn> {
                                           child: Text(
                                             "Register",
                                             style: TextStyle(
-                                                color: kprimary,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.w800,
                                                 fontSize: 15),
                                           ),

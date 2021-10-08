@@ -20,6 +20,13 @@ late UserDataProvider _dataProvider;
 class _FavouriteScreenState extends State<FavouriteScreen> {
   User? user;
 
+  String userUid = "";
+  getUserId() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      _dataProvider.getFavouriteData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
@@ -29,7 +36,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     _dataProvider = Provider.of<UserDataProvider>(
       context,
     );
-    _dataProvider.getFavouriteData();
+    getUserId();
     return Container(
       color: kprimary,
       child: SafeArea(
@@ -72,6 +79,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                           itemBuilder: (context, index) {
                             print(_dataProvider.getFavouritesListLength());
                             return Singlenews(
+                              content: _dataProvider
+                                  .getFavouritesList[index].content,
                               index: 8,
                               isColor: true,
                               authname: _dataProvider

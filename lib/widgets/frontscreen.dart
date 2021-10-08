@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:news_app/model/news.dart';
-import 'package:news_app/provider/userdataprovider.dart';
-import 'package:provider/provider.dart';
 import 'package:news_app/widgets/newslist.dart';
 import 'singlenews.dart';
 
@@ -39,17 +37,22 @@ class _FrontScreenState extends State<FrontScreen> {
     // }
 
     var response = await get(Uri.parse(url));
-    Map data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
 
-    data["articles"].forEach((element) {
-      NewsModel newsModel = NewsModel();
-      newsModel = NewsModel.fromMap(element);
-      newslist.add(newsModel);
-    });
+      data["articles"].forEach((element) {
+        NewsModel newsModel = NewsModel();
+        newsModel = NewsModel.fromMap(element);
+        newslist.add(newsModel);
+      });
+      print("Data Fetched Easily 2");
+      // setState(() {
+      //   isloading = false;
+      // });
 
-    setState(() {
-      isloading = false;
-    });
+    } else {
+      throw Exception('Failed to load album');
+    }
   }
 
   Widget customChip({required String tag}) {
@@ -78,13 +81,6 @@ class _FrontScreenState extends State<FrontScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getNews(category: widget.category, query: widget.query);
   }
 
   @override
@@ -120,94 +116,94 @@ class _FrontScreenState extends State<FrontScreen> {
           //     ],
           //   ),
           // ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-                // color: Colors.teal,
-                // border: Border.symmetric(
-                //   horizontal: BorderSide(color: Colors.black12, width: 2),
-                // ),
-                ),
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            width: _width,
-            height: _height * 0.24,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: _width,
-                  // color: Colors.amberAccent,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Popular Tags",
-                        style: GoogleFonts.lato(
-                          textStyle: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: _width,
-                  height: _height * 0.19,
-                  // color: Colors.indigo,
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          customChip(tag: "music"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "health"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "entertainment"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          customChip(tag: "technology"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "apple"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "ronaldo"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          customChip(tag: "rock"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "pakistan"),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          customChip(tag: "pubg"),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.symmetric(vertical: 5),
+          //   decoration: BoxDecoration(
+          //       // color: Colors.teal,
+          //       // border: Border.symmetric(
+          //       //   horizontal: BorderSide(color: Colors.black12, width: 2),
+          //       // ),
+          //       ),
+          //   padding: EdgeInsets.symmetric(horizontal: 10),
+          //   width: _width,
+          //   height: _height * 0.24,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       // Container(
+          //       //   width: _width,
+          //       //   // color: Colors.amberAccent,
+          //       //   child: Row(
+          //       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       //     children: [
+          //       //       Text(
+          //       //         "Popular Tags",
+          //       //         style: GoogleFonts.lato(
+          //       //           textStyle: TextStyle(
+          //       //             fontSize: 22,
+          //       //             fontWeight: FontWeight.bold,
+          //       //           ),
+          //       //         ),
+          //       //       ),
+          //       //     ],
+          //       //   ),
+          //       // ),
+          //       // Container(
+          //       //   width: _width,
+          //       //   height: _height * 0.19,
+          //       //   // color: Colors.indigo,
+          //       //   margin: EdgeInsets.symmetric(vertical: 5),
+          //       //   child: Column(
+          //       //     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       //     children: [
+          //       //       Row(
+          //       //         mainAxisAlignment: MainAxisAlignment.start,
+          //       //         children: [
+          //       //           customChip(tag: "music"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "health"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "entertainment"),
+          //       //         ],
+          //       //       ),
+          //       //       Row(
+          //       //         mainAxisAlignment: MainAxisAlignment.start,
+          //       //         children: [
+          //       //           customChip(tag: "technology"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "apple"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "ronaldo"),
+          //       //         ],
+          //       //       ),
+          //       //       Row(
+          //       //         mainAxisAlignment: MainAxisAlignment.start,
+          //       //         children: [
+          //       //           customChip(tag: "rock"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "pakistan"),
+          //       //           SizedBox(
+          //       //             width: 15,
+          //       //           ),
+          //       //           customChip(tag: "pubg"),
+          //       //         ],
+          //       //       ),
+          //       //     ],
+          //       //   ),
+          //       // ),
+          //     ],
+          //   ),
+          // ),
           // Container(
           //   width: _width,
           //   height: _height * 0.05,
@@ -232,30 +228,46 @@ class _FrontScreenState extends State<FrontScreen> {
           //     ],
           //   ),
           // ),
-          isloading == false
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: newslist.length,
-                  itemBuilder: (ctx, index) {
-                    return InkWell(
-                      onTap: () {},
-                      child: Singlenews(
-                        isColor: false,
-                        index: index,
-                        chname: newslist[index].chName,
-                        authname: newslist[index].author,
-                        date: newslist[index].date,
-                        title: newslist[index].title,
-                        image: newslist[index].imageUrl,
-                        desc: newslist[index].desc,
-                        webUrl: newslist[index].webUrl,
-                      ),
-                    );
-                  })
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
+          // isloading == false
+          //     ?
+          FutureBuilder(
+              future: getNews(category: widget.category, query: widget.query),
+              builder: (context, projectSnap) {
+                if (projectSnap.connectionState == ConnectionState.none &&
+                    projectSnap.hasData == null) {
+                  print('project snapshot data is: ${projectSnap.data}');
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Search Not Available"),
+                    ],
+                  );
+                }
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: newslist.length,
+                    itemBuilder: (ctx, index) {
+                      return InkWell(
+                        onTap: () {},
+                        child: Singlenews(
+                          content: newslist[index].content,
+                          isColor: false,
+                          index: index,
+                          chname: newslist[index].chName,
+                          authname: newslist[index].author,
+                          date: newslist[index].date,
+                          title: newslist[index].title,
+                          image: newslist[index].imageUrl,
+                          desc: newslist[index].desc,
+                          webUrl: newslist[index].webUrl,
+                        ),
+                      );
+                    });
+              }),
+          // : Center(
+          //     child: CircularProgressIndicator(),
+          //   ),
         ],
       ),
     );

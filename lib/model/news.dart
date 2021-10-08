@@ -8,6 +8,7 @@ class NewsModel {
   late String author;
   late String date;
   late String desc;
+  late String content;
   NewsModel({
     this.chName = "",
     this.imageUrl = "",
@@ -16,6 +17,7 @@ class NewsModel {
     this.author = "",
     this.date = "",
     this.desc = "",
+    this.content = "",
   });
 
   factory NewsModel.fromMap(Map news) {
@@ -31,6 +33,7 @@ class NewsModel {
       author: news["author"] == null ? "" : news["author"],
       date: time == null ? "" : time,
       desc: news["description"] == null ? "" : news["description"],
+      content: news["content"] == null ? "" : news["content"],
     );
   }
 }

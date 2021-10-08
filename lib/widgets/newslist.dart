@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:news_app/constraints.dart';
 import 'package:news_app/model/news.dart';
 
 import 'singlenews.dart';
@@ -17,21 +18,31 @@ class newsList extends StatefulWidget {
 class _newslistState extends State<newsList> {
   List<NewsModel> newsList = <NewsModel>[];
   late bool isLoading = true;
-  getNews(String query) async {
-    String url =
-        "https://newsapi.org/v2/everything?q=$query&apiKey=eb672f375cc844968196976f9c627a34";
+  Future getNews({required String query}) async {
+    String tolow = query.toLowerCase();
+    String name = tolow.trim();
+    var url;
+
+    url =
+        "https://newsapi.org/v2/everything?q=$name&apiKey=eb672f375cc844968196976f9c627a34";
 
     var response = await get(Uri.parse(url));
-    Map data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
 
-    data["articles"].forEach((element) {
-      NewsModel newsModel = NewsModel();
-      newsModel = NewsModel.fromMap(element);
-      newsList.add(newsModel);
-    });
-    setState(() {
-      isLoading = false;
-    });
+      data["articles"].forEach((element) {
+        NewsModel newsModel = NewsModel();
+        newsModel = NewsModel.fromMap(element);
+        newsList.add(newsModel);
+      });
+      print("Data Fetched Easily");
+      // setState(() {
+      //   isloading = false;
+      // });
+      print("News list Length ${newsList.length}");
+    } else {
+      throw Exception('Failed to load album');
+    }
   }
 
   getNewsCategories(
@@ -54,24 +65,21 @@ class _newslistState extends State<newsList> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getNews(widget.name);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: Text(widget.name),
-          centerTitle: true,
-        ),
-        body: Container(
-            // color: Colors.blue,
-            child: isLoading == false
-                ? ListView.builder(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        brightness: Brightness.dark,
+        backgroundColor: kprimary,
+        title: Text(widget.name.toUpperCase()),
+        centerTitle: true,
+      ),
+      body: FutureBuilder(
+          future: getNews(query: widget.name),
+          builder: (context, snapshot) {
+            return Container(
+                // color: Colors.blue,
+                child: ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: newsList.length,
@@ -79,6 +87,7 @@ class _newslistState extends State<newsList> {
                       return InkWell(
                         onTap: () {},
                         child: Singlenews(
+                          content: newsList[index].content,
                           isColor: false,
                           index: index,
                           chname: newsList[index].chName,
@@ -90,9 +99,8 @@ class _newslistState extends State<newsList> {
                           webUrl: newsList[index].webUrl,
                         ),
                       );
-                    })
-                : Center(
-                    child: CircularProgressIndicator(),
-                  )));
+                    }));
+          }),
+    );
   }
 }

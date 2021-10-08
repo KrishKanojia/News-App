@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:news_app/constraints.dart';
 import 'package:news_app/model/news.dart';
 import 'package:news_app/widgets/singlenews.dart';
 
@@ -14,44 +15,40 @@ class searchScreen extends StatefulWidget {
 }
 
 class _searchScreenState extends State<searchScreen> {
-  bool isloading = true;
   TextEditingController searchController = TextEditingController();
   List<NewsModel> newslist = <NewsModel>[];
-  getNews({required String query}) async {
-    print("Printing widgit Item ${widget.item}");
+  Future getNews({required String query}) async {
+    String tolow = query.toLowerCase();
+    String name = tolow.trim();
     var url;
 
     url =
-        "https://newsapi.org/v2/everything?q=$query&apiKey=eb672f375cc844968196976f9c627a34";
+        "https://newsapi.org/v2/everything?q=$name&apiKey=eb672f375cc844968196976f9c627a34";
 
     var response = await get(Uri.parse(url));
-    Map data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
 
-    data["articles"].forEach((element) {
-      NewsModel newsModel = NewsModel();
-      newsModel = NewsModel.fromMap(element);
-      newslist.add(newsModel);
-    });
-    setState(() {
-      isloading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    getNews(
-      query: widget.item,
-    );
+      data["articles"].forEach((element) {
+        NewsModel newsModel = NewsModel();
+        newsModel = NewsModel.fromMap(element);
+        newslist.add(newsModel);
+      });
+      print("Data Fetched Easily");
+      // setState(() {
+      //   isloading = false;
+      // });
+      print("News list Length ${newslist.length}");
+    } else {
+      throw Exception('Failed to load album');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // The search area her
+        backgroundColor: kprimary,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -174,67 +171,74 @@ class _searchScreenState extends State<searchScreen> {
                 //     ),
                 //   ),
                 // ),
-                child: Container(
-                  child: isloading
-                      ? Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
-                          physics: ScrollPhysics(),
-                          child:
-                              // FrontScreen(),
-                              Column(
-                            children: [
-                              // Container(
-                              //   color: kprimary,
-                              //   width: _width,
-                              //   height: _height * 0.1,
-                              //   child: Column(
-                              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              //     children: [
-                              //       // Center(
-                              //       //   child: Text(
-                              //       //     "Infinite News",
-                              //       //     style: GoogleFonts.lato(
-                              //       //       textStyle:
-                              //       //           TextStyle(fontSize: 25, color: Colors.white),
-                              //       //     ),
-                              //       //   ),
-                              //       // ),
+                child: FutureBuilder(
+                    future: getNews(query: widget.item),
+                    builder: (context, projectSnap) {
+                      if (projectSnap.connectionState == ConnectionState.none &&
+                          projectSnap.hasData == null) {
+                        print('project snapshot data is: ${projectSnap.data}');
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Search Not Available"),
+                          ],
+                        );
+                      }
+                      return SingleChildScrollView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        physics: ScrollPhysics(),
+                        child:
+                            // FrontScreen(),
+                            Column(
+                          children: [
+                            // Container(
+                            //   color: kprimary,
+                            //   width: _width,
+                            //   height: _height * 0.1,
+                            //   child: Column(
+                            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //     children: [
+                            //       // Center(
+                            //       //   child: Text(
+                            //       //     "Infinite News",
+                            //       //     style: GoogleFonts.lato(
+                            //       //       textStyle:
+                            //       //           TextStyle(fontSize: 25, color: Colors.white),
+                            //       //     ),
+                            //       //   ),
+                            //       // ),
 
-                              //       // TabBarView(children: children)
-                              //     ],
-                              //   ),
-                              // ),
+                            //       // TabBarView(children: children)
+                            //     ],
+                            //   ),
+                            // ),
 
-                              isloading == false
-                                  ? ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: newslist.length,
-                                      itemBuilder: (ctx, index) {
-                                        return InkWell(
-                                          onTap: () {},
-                                          child: Singlenews(
-                                            isColor: false,
-                                            index: index,
-                                            chname: newslist[index].chName,
-                                            authname: newslist[index].author,
-                                            date: newslist[index].date,
-                                            title: newslist[index].title,
-                                            image: newslist[index].imageUrl,
-                                            desc: newslist[index].desc,
-                                            webUrl: newslist[index].webUrl,
-                                          ),
-                                        );
-                                      })
-                                  : Center(
-                                      child: CircularProgressIndicator(),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: newslist.length,
+                                itemBuilder: (ctx, index) {
+                                  return InkWell(
+                                    onTap: () {},
+                                    child: Singlenews(
+                                      content: newslist[index].content,
+                                      isColor: false,
+                                      index: index,
+                                      chname: newslist[index].chName,
+                                      authname: newslist[index].author,
+                                      date: newslist[index].date,
+                                      title: newslist[index].title,
+                                      image: newslist[index].imageUrl,
+                                      desc: newslist[index].desc,
+                                      webUrl: newslist[index].webUrl,
                                     ),
-                            ],
-                          ),
+                                  );
+                                })
+                          ],
                         ),
-                ),
+                      );
+                    }),
               ),
             ],
           ),

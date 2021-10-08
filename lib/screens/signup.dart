@@ -187,7 +187,7 @@ class _SignUpState extends State<SignUp> {
                   // color: Colors.amber,
                   image: DecorationImage(
                     image: AssetImage(
-                      "assets/logo.png",
+                      "assets/logo3.png",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -273,6 +273,7 @@ class _SignUpState extends State<SignUp> {
                                         obscureText: obserText,
                                         myIcon: Icon(
                                           Icons.lock_outline_sharp,
+                                          color: kprimary,
                                           size: 18,
                                         ),
                                       ),
@@ -290,7 +291,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                               Align(
-                                alignment: Alignment(0, 0.9),
+                                alignment: Alignment(0, _height * 0.00125),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   width: double.infinity,
@@ -305,7 +306,8 @@ class _SignUpState extends State<SignUp> {
                                         height: _height * 0.06,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              shape: StadiumBorder()),
+                                              shape: StadiumBorder(),
+                                              primary: kprimary),
                                           child: Text("Sign Up"),
                                           onPressed: () {
                                             validation();
@@ -316,7 +318,7 @@ class _SignUpState extends State<SignUp> {
                                         margin: EdgeInsets.symmetric(
                                             horizontal: _width * 0.1),
                                         padding:
-                                            EdgeInsets.symmetric(vertical: 5),
+                                            EdgeInsets.symmetric(vertical: 10),
                                         height: _height * 0.05,
                                         // color: Colors.amber,
                                         width: _width * 0.48,
@@ -343,7 +345,7 @@ class _SignUpState extends State<SignUp> {
                                               child: Text(
                                                 "Sign In",
                                                 style: TextStyle(
-                                                    color: kprimary,
+                                                    color: Colors.black,
                                                     fontWeight: FontWeight.w800,
                                                     fontSize: 15),
                                               ),

@@ -12,7 +12,8 @@ import 'screens/homapage.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarIconBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.light,
+    statusBarColor: Colors.transparent,
   ));
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());

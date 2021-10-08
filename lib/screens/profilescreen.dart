@@ -297,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Text("Yes"),
       onPressed: () {
         FirebaseAuth.instance.signOut();
-        print("SignIn Out");
+        print("Sign Out");
         setState(() {
           validateUser = false;
         });
@@ -401,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  primary: Color(0xff455a64),
+                                  primary: kprimary,
                                 ),
                                 child: Text(
                                   "Sign In",
@@ -434,6 +434,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
 
                           return ListView(
+                            physics: NeverScrollableScrollPhysics(),
                             children: snapshot.data!.docs
                                 .map((DocumentSnapshot document) {
                               Map<String, dynamic> data =
@@ -475,11 +476,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             )
                                           : Container(),
                                       Positioned(
-                                        top: _height * 0.247,
+                                        bottom: 0,
                                         width: _width,
                                         child: Container(
                                           width: _width,
-                                          height: _height * 0.67,
+                                          height: _height * 0.76,
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                           ),
@@ -492,37 +493,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             shape: BoxShape.circle,
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //       blurRadius: 2,
-                                            //       color: Colors.white,
-                                            //       spreadRadius: 2)
-                                            // ],
                                           ),
-                                          child: CircleAvatar(
-                                              radius: 70,
-                                              backgroundColor: Colors.white,
-                                              child: ClipOval(
-                                                child: (_pickedImage == null)
-                                                    ? (userModel.UserImage ==
-                                                            "")
-                                                        ? Image.asset(
-                                                            "assets/galleryicon.png")
-                                                        : Image.network(
-                                                            userModel.UserImage,
-                                                            fit: BoxFit.cover,
-                                                            height:
-                                                                _height * 0.17,
-                                                            width:
-                                                                _height * 0.17,
-                                                          )
-                                                    : Image.file(
-                                                        _pickedImage,
-                                                        fit: BoxFit.cover,
-                                                        height: _height * 0.17,
-                                                        width: _height * 0.17,
-                                                      ),
-                                              )),
+                                          child: Card(
+                                            color: Colors.transparent,
+                                            elevation: 18,
+                                            shape: CircleBorder(),
+                                            child: CircleAvatar(
+                                                radius: _width * 0.171,
+                                                backgroundColor: Colors.white,
+                                                child: ClipOval(
+                                                  child: (_pickedImage == null)
+                                                      ? (userModel.UserImage ==
+                                                              "")
+                                                          ? Image.asset(
+                                                              "assets/galleryicon.png")
+                                                          : Image.network(
+                                                              userModel
+                                                                  .UserImage,
+                                                              fit: BoxFit.cover,
+                                                              height: _height *
+                                                                  0.17,
+                                                              width: _height *
+                                                                  0.17,
+                                                            )
+                                                      : Image.file(
+                                                          _pickedImage,
+                                                          fit: BoxFit.cover,
+                                                          height:
+                                                              _height * 0.17,
+                                                          width: _height * 0.17,
+                                                        ),
+                                                )),
+                                          ),
                                         ),
                                       ),
                                       edit == true
@@ -671,8 +673,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.green),
+                              style:
+                                  ElevatedButton.styleFrom(primary: kprimary),
                               child: Text(
                                 "Sign In",
                                 style: TextStyle(fontSize: 35),

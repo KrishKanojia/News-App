@@ -3,19 +3,15 @@ import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:news_app/constraints.dart';
-import 'package:news_app/main.dart';
 import 'package:news_app/model/news.dart';
 import 'package:news_app/provider/userdataprovider.dart';
 import 'package:news_app/widgets/frontscreen.dart';
 import 'package:news_app/widgets/newslist.dart';
 import 'package:news_app/widgets/singlenews.dart';
 import 'package:provider/provider.dart';
-
-import 'profilescreen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -57,40 +53,46 @@ class _HomePageState extends State<HomePage> {
   }
 
   late UserDataProvider _dataProvider;
-  bool isloading = true;
+  // bool isloading = true;
 
   List<NewsModel> newslist = <NewsModel>[];
 
   String news = "tesla";
   int Categories = 1;
-  getNews({required String query}) async {
+  Future getNews({required String query}) async {
     var url;
 
     url =
         "https://newsapi.org/v2/top-headlines?q=$query&apiKey=eb672f375cc844968196976f9c627a34";
 
     var response = await get(Uri.parse(url));
-    Map data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
 
-    data["articles"].forEach((element) {
-      NewsModel newsModel = NewsModel();
-      newsModel = NewsModel.fromMap(element);
-      newslist.add(newsModel);
-    });
-    setState(() {
-      isloading = false;
-    });
+      data["articles"].forEach((element) {
+        NewsModel newsModel = NewsModel();
+        newsModel = NewsModel.fromMap(element);
+        newslist.add(newsModel);
+      });
+      print("Data Fetched Easily");
+      // setState(() {
+      //   isloading = false;
+      // });
+
+    } else {
+      throw Exception('Failed to load album');
+    }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // introPart();
-    getNews(
-      query: news,
-    );
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   // introPart();
+  //   getNews(
+  //     query: news,
+  //   );
+  // }
 
   introPart() {
     showAlertDialog(BuildContext ctx) {
@@ -120,6 +122,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  String userUid = "";
+  getUserId() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      _dataProvider.getFavouriteData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
@@ -135,7 +144,7 @@ class _HomePageState extends State<HomePage> {
     // print("This is Current User $user");
     // showAlertDialog(context);
     introPart();
-    _dataProvider.getFavouriteData();
+    getUserId();
     return DefaultTabController(
       length: 4,
       child: Builder(builder: (context) {
@@ -148,9 +157,10 @@ class _HomePageState extends State<HomePage> {
           child: SafeArea(
             child: Scaffold(
               appBar: AppBar(
+                backgroundColor: kprimary,
                 centerTitle: true,
                 title: Text(
-                  "Infinite News",
+                  "Global News",
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(fontSize: 25, color: Colors.white),
                   ),
@@ -235,63 +245,138 @@ class _HomePageState extends State<HomePage> {
               ),
               body: TabBarView(
                 children: [
-                  SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    physics: ScrollPhysics(),
-                    child:
-                        // FrontScreen(),
-                        Column(
-                      children: [
-                        // Container(
-                        //   color: kprimary,
-                        //   width: _width,
-                        //   height: _height * 0.1,
-                        //   child: Column(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        //     children: [
-                        //       // Center(
-                        //       //   child: Text(
-                        //       //     "Infinite News",
-                        //       //     style: GoogleFonts.lato(
-                        //       //       textStyle:
-                        //       //           TextStyle(fontSize: 25, color: Colors.white),
-                        //       //     ),
-                        //       //   ),
-                        //       // ),
-
-                        //       // TabBarView(children: children)
-                        //     ],
-                        //   ),
-                        // ),
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 5),
-                          decoration: BoxDecoration(
-                              // color: Colors.teal,
-                              // border: Border.symmetric(
-                              //   horizontal: BorderSide(color: Colors.black12, width: 2),
-                              // ),
-                              ),
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          width: _width,
-                          height: _height * 0.24,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  FutureBuilder(
+                      future: getNews(query: "tesla"),
+                      builder: (context, projectSnap) {
+                        if (projectSnap.connectionState ==
+                                ConnectionState.none &&
+                            projectSnap.hasData == null) {
+                          print(
+                              'project snapshot data is: ${projectSnap.data}');
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text("Search Not Available"),
+                            ],
+                          );
+                        }
+                        return SingleChildScrollView(
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          physics: ScrollPhysics(),
+                          child:
+                              // FrontScreen(),
+                              Column(
+                            children: [
+                              // Container(
+                              //   color: kprimary,
+                              //   width: _width,
+                              //   height: _height * 0.1,
+                              //   child: Column(
+                              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              //     children: [
+                              //       // Center(
+                              //       //   child: Text(
+                              //       //     "Infinite News",
+                              //       //     style: GoogleFonts.lato(
+                              //       //       textStyle:
+                              //       //           TextStyle(fontSize: 25, color: Colors.white),
+                              //       //     ),
+                              //       //   ),
+                              //       // ),
+
+                              //       // TabBarView(children: children)
+                              //     ],
+                              //   ),
+                              // ),
                               Container(
+                                margin: EdgeInsets.symmetric(vertical: 5),
+                                decoration: BoxDecoration(
+                                    // color: Colors.teal,
+                                    // border: Border.symmetric(
+                                    //   horizontal: BorderSide(color: Colors.black12, width: 2),
+                                    // ),
+                                    ),
+                                padding: EdgeInsets.symmetric(horizontal: 10),
                                 width: _width,
-                                // color: Colors.amberAccent,
-                                child: Row(
+                                height: _height * 0.24,
+                                child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      "Popular Tags",
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    Container(
+                                      width: _width,
+                                      // color: Colors.amberAccent,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Popular Tags",
+                                            style: GoogleFonts.lato(
+                                              textStyle: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: _width,
+                                      height: _height * 0.19,
+                                      // color: Colors.indigo,
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      child: Column(
+                                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              customChip(tag: "music"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "health"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "entertainment"),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              customChip(tag: "technology"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "apple"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "ronaldo"),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              customChip(tag: "rock"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "pakistan"),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              customChip(tag: "pubg"),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -299,115 +384,60 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Container(
                                 width: _width,
-                                height: _height * 0.19,
-                                // color: Colors.indigo,
-                                margin: EdgeInsets.symmetric(vertical: 5),
-                                child: Column(
-                                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                height: _height * 0.05,
+                                // color: Colors.green,
+                                margin: EdgeInsets.symmetric(horizontal: 25),
+                                child: Row(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        customChip(tag: "music"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "health"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "entertainment"),
-                                      ],
+                                    Icon(
+                                      Icons.thumb_up_off_alt_sharp,
+                                      color: Colors.black,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        customChip(tag: "technology"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "apple"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "ronaldo"),
-                                      ],
+                                    SizedBox(
+                                      width: 15,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        customChip(tag: "rock"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "pakistan"),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        customChip(tag: "pubg"),
-                                      ],
-                                    ),
+                                    Text(
+                                      "RECOMMENDED FOR YOU",
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
+                              // isloading == false
+                              //     ?
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: newslist.length,
+                                  itemBuilder: (ctx, index) {
+                                    return InkWell(
+                                      onTap: () {},
+                                      child: Singlenews(
+                                        content: newslist[index].content,
+                                        isColor: false,
+                                        index: index,
+                                        chname: newslist[index].chName,
+                                        authname: newslist[index].author,
+                                        date: newslist[index].date,
+                                        title: newslist[index].title,
+                                        image: newslist[index].imageUrl,
+                                        desc: newslist[index].desc,
+                                        webUrl: newslist[index].webUrl,
+                                      ),
+                                    );
+                                  })
+                              // :
+                              // Center(
+                              //     child: CircularProgressIndicator(),
+                              //   ),
                             ],
                           ),
-                        ),
-                        Container(
-                          width: _width,
-                          height: _height * 0.05,
-                          // color: Colors.green,
-                          margin: EdgeInsets.symmetric(horizontal: 25),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.thumb_up_off_alt_sharp,
-                                color: Colors.black,
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                "RECOMMENDED FOR YOU",
-                                style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        isloading == false
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: newslist.length,
-                                itemBuilder: (ctx, index) {
-                                  return InkWell(
-                                    onTap: () {},
-                                    child: Singlenews(
-                                      isColor: false,
-                                      index: index,
-                                      chname: newslist[index].chName,
-                                      authname: newslist[index].author,
-                                      date: newslist[index].date,
-                                      title: newslist[index].title,
-                                      image: newslist[index].imageUrl,
-                                      desc: newslist[index].desc,
-                                      webUrl: newslist[index].webUrl,
-                                    ),
-                                  );
-                                })
-                            : Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                      ],
-                    ),
-                  ),
+                        );
+                      }),
                   FrontScreen(
                     category: "everything",
                     query: 'amazon',
@@ -429,63 +459,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-// backgroundColor: Colors.transparent,
-            // appBar: AppBar(
-            //   backgroundColor: kprimary,
-            //   title: Column(
-            //     children: [
-            //       SizedBox(
-            //         height: 10,
-            //       ),
-            //       Text(
-            //         "Infinite News",
-            //         style: GoogleFonts.lato(
-            //           textStyle: TextStyle(fontSize: 25),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            //   centerTitle: true,
-            //   bottom: PreferredSize(
-            //     preferredSize: Size.fromHeight(_height * 0.07),
-            //     child: Container(
-            //       // color: Colors.blue,
-            //       height: _height * 0.07,
-            //       width: _width,
-            //       child: TabBar(
-            //         isScrollable: true,
-            //         tabs: [
-            //           Text(
-            //             "Top Stories",
-            //             style: GoogleFonts.lato(
-            //               textStyle: TextStyle(fontSize: 20),
-            //             ),
-            //           ),
-            //           Text(
-            //             "Headlines",
-            //             style: GoogleFonts.lato(
-            //               textStyle: TextStyle(fontSize: 20),
-            //             ),
-            //           ),
-            //           Text(
-            //             "Popular News",
-            //             style: GoogleFonts.lato(
-            //               textStyle: TextStyle(fontSize: 20),
-            //             ),
-            //           ),
-            //           Text(
-            //             "Sport News",
-            //             style: GoogleFonts.lato(
-            //               textStyle: TextStyle(fontSize: 20),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // bottomNavigationBar: BottomNavigationBar(
-            //   items: [],
-            // ),

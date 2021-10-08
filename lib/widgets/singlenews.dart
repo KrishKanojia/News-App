@@ -20,6 +20,7 @@ class Singlenews extends StatefulWidget {
   late String webUrl;
   bool isColor;
   late String docId;
+  late String content;
   Singlenews({
     required this.image,
     required this.chname,
@@ -31,6 +32,7 @@ class Singlenews extends StatefulWidget {
     required this.desc,
     required this.webUrl,
     this.docId = "",
+    required this.content,
   });
   @override
   _SinglenewsState createState() => _SinglenewsState();
@@ -85,6 +87,7 @@ class _SinglenewsState extends State<Singlenews> {
     required String description,
     required String title,
     required String webUrl,
+    required String content,
   }) async {
     if (user != null) {
       setState(() {
@@ -113,6 +116,7 @@ class _SinglenewsState extends State<Singlenews> {
         "Title": title,
         "Web Url": webUrl,
         "DocId": randomDoc.id,
+        "Content": content,
       });
     } else {
       showAlertDialog(context);
@@ -153,6 +157,7 @@ class _SinglenewsState extends State<Singlenews> {
           MaterialPageRoute(
             builder: (ctx) => DetailScreen(
               chName: widget.chname,
+              content: widget.content,
               title: widget.title,
               imageUrl: widget.image,
               authorNm: widget.authname,
@@ -242,6 +247,7 @@ class _SinglenewsState extends State<Singlenews> {
                               ),
                               onPressed: () {
                                 checkUser(
+                                  content: widget.content,
                                   title: widget.title,
                                   image: widget.image,
                                   chName: widget.chname,

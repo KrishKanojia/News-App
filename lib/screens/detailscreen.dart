@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/screens/homapage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -12,6 +13,7 @@ class DetailScreen extends StatefulWidget {
   late String date = "";
   late String authorNm = "";
   late String title = "";
+  late String content = "";
 
   late String webUrl = "";
 
@@ -23,6 +25,7 @@ class DetailScreen extends StatefulWidget {
     required this.authorNm,
     required this.webUrl,
     required this.title,
+    required this.content,
   });
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -80,7 +83,7 @@ class _DetailScreenState extends State<DetailScreen> {
               //   onPressed: null,
               //   icon: Icon(Icons.arrow_back_ios_new_outlined),
               // ),
-
+              brightness: Brightness.dark,
               expandedHeight: MediaQuery.of(context).size.height * 0.6,
               flexibleSpace: Stack(
                 children: [
@@ -111,7 +114,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     right: 0,
                   ),
                   Positioned(
-                    bottom: _height * 0.07,
+                    bottom: _height * 0.01,
                     left: 0,
                     right: 0,
                     child: Container(
@@ -126,27 +129,26 @@ class _DetailScreenState extends State<DetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Theme(
-                            data: ThemeData(canvasColor: Colors.white54),
-                            child: GestureDetector(
-                              onTap: show,
-                              child: Chip(
-                                label: Text(
-                                  widget.chName,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                backgroundColor:
-                                    Colors.transparent, // or any other color
-                              ),
-                            ),
-                          ),
+                          // Theme(
+                          //   data: ThemeData(canvasColor: Colors.white54),
+                          //   child: GestureDetector(
+                          //     onTap: show,
+                          //     child: Chip(
+                          //       label: Text(
+                          //         widget.chName,
+                          //         style: TextStyle(
+                          //           fontSize: 18,
+                          //           color: Colors.black,
+                          //         ),
+                          //       ),
+                          //       backgroundColor:
+                          //           Colors.transparent, // or any other color
+                          //     ),
+                          //   ),
+                          // ),
 
                           Text(
                             widget.title,
-                            maxLines: 2,
                             style: TextStyle(
                               fontSize: 19,
                               fontWeight: FontWeight.bold,
@@ -154,14 +156,6 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                           ),
 
-                          Text(
-                            widget.desc,
-                            maxLines: 2,
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
                           // )
                         ],
                       ),
@@ -206,17 +200,136 @@ class _DetailScreenState extends State<DetailScreen> {
             //             ),
             //           ),
             SliverFillRemaining(
-              child: WebView(
-                debuggingEnabled: false,
-                initialUrl: widget.webUrl,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  setState(() {
-                    controller.complete(webViewController);
-                  });
-                },
+              child: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: _width * 0.05),
+                  // color: Colors.indigo,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Chip(
+                            label: Text(
+                              widget.chName,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              ),
+                            ),
+                            backgroundColor: Colors.black, // or any other color
+                          ),
+                          Chip(
+                            label: Text(
+                              widget.date,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              ),
+                            ),
+                            backgroundColor: Colors.grey,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: _height * 0.02),
+                      Text(
+                        "Author Name: ",
+                        maxLines: 2,
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                              color: Colors.black),
+                        ),
+                      ),
+                      widget.authorNm != ""
+                          ? Text(
+                              widget.authorNm,
+                              maxLines: 2,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            )
+                          : Text(
+                              "Unkown",
+                              maxLines: 2,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            ),
+                      SizedBox(height: _height * 0.02),
+                      Text(
+                        "Description: ",
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                              color: Colors.black),
+                        ),
+                      ),
+                      widget.desc == ""
+                          ? Text(
+                              widget.desc,
+                              maxLines: 2,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            )
+                          : Text(
+                              "Not Available",
+                              maxLines: 2,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            ),
+                      SizedBox(height: _height * 0.02),
+                      Text(
+                        "Content: ",
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                              color: Colors.black),
+                        ),
+                      ),
+                      widget.content == ""
+                          ? Text(
+                              widget.content,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            )
+                          : Text(
+                              "Not Available",
+                              maxLines: 2,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
               ),
             ),
+            // child: WebView(
+            //   debuggingEnabled: false,
+            //   initialUrl: widget.webUrl,
+            //   javascriptMode: JavascriptMode.unrestricted,
+            //   onWebViewCreated: (WebViewController webViewController) {
+            //     setState(() {
+            //       controller.complete(webViewController);
+            //     });
+            //   },
+            // ),
           ],
         )
         // ],

@@ -29,7 +29,7 @@ class PasswordTextFormField extends StatelessWidget {
           prefixIcon: myIcon,
           filled: true,
           fillColor: Colors.grey[200],
-          hintStyle: TextStyle(color: kprimary, fontSize: 17),
+          hintStyle: TextStyle(color: Colors.black, fontSize: 17),
           hintText: name,
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25),
