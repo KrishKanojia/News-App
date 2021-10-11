@@ -48,6 +48,7 @@ class _searchScreenState extends State<searchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.dark,
         backgroundColor: kprimary,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,

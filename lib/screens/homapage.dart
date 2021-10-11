@@ -75,24 +75,10 @@ class _HomePageState extends State<HomePage> {
         newslist.add(newsModel);
       });
       print("Data Fetched Easily");
-      // setState(() {
-      //   isloading = false;
-      // });
-
     } else {
       throw Exception('Failed to load album');
     }
   }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   // introPart();
-  //   getNews(
-  //     query: news,
-  //   );
-  // }
 
   introPart() {
     showAlertDialog(BuildContext ctx) {
@@ -343,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                                               SizedBox(
                                                 width: 15,
                                               ),
-                                              customChip(tag: "entertainment"),
+                                              customChip(tag: "pakistan"),
                                             ],
                                           ),
                                           Row(
@@ -369,7 +355,7 @@ class _HomePageState extends State<HomePage> {
                                               SizedBox(
                                                 width: 15,
                                               ),
-                                              customChip(tag: "pakistan"),
+                                              customChip(tag: "entertainment"),
                                               SizedBox(
                                                 width: 15,
                                               ),

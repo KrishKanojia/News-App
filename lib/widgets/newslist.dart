@@ -81,7 +81,6 @@ class _newslistState extends State<newsList> {
                 // color: Colors.blue,
                 child: ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
                     itemCount: newsList.length,
                     itemBuilder: (ctx, index) {
                       return InkWell(

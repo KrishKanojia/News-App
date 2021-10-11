@@ -274,7 +274,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       widget.desc == ""
                           ? Text(
-                              widget.desc,
+                              "Not Available",
                               maxLines: 2,
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
@@ -282,8 +282,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                             )
                           : Text(
-                              "Not Available",
-                              maxLines: 2,
+                              widget.desc,
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
                                     fontSize: 16, color: Colors.black),
@@ -301,20 +300,20 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       widget.content == ""
                           ? Text(
-                              widget.content,
-                              style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
-                            )
-                          : Text(
                               "Not Available",
                               maxLines: 2,
                               style: GoogleFonts.lato(
                                 textStyle: TextStyle(
                                     fontSize: 16, color: Colors.black),
                               ),
-                            ),
+                            )
+                          : Text(
+                              widget.content,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            )
                     ],
                   ),
                 ),
